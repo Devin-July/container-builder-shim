@@ -1,0 +1,108 @@
+# GolangCI-Lint configuration for container-builder-shim
+# This configuration is initially non-blocking to avoid disrupting existing workflows
+
+run:
+  timeout: 5m
+  tests: true
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
+  goimports:
+    local-prefixes: github.com/apple/container-builder-shim
+  govet:
+    enable:
+      - shadow  # Enable shadow checking in govet
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+      - style
+    disabled-checks:
+      - dupImport # https://github.com/go-critic/go-critic/issues/845
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - wrapperFunc
+      - commentFormatting # Disable comment formatting to avoid issues with existing code style
+
+linters:
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exhaustive
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - mnd  # Replaced gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - rowserrcheck
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+issues:
+  # Skip generated protobuf files
+  exclude-dirs:
+    - vendor
+  exclude-files:
+    - ".*\\.pb\\.go$"
+  
+  # Initially set to non-blocking mode - report issues but don't fail the build
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  
+  # Exclude some linters from running on tests files
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - mnd
+        - goconst
+        - dupl
+    
+    # Exclude known linter issues
+    - text: "Use of weak random number generator"
+      linters:
+        - gosec
+    
+    # Exclude shadow checking on err variables in tests
+    - path: _test\.go
+      text: "shadow: declaration of \"err\""
+      linters:
+        - govet
+
+# Use updated output format configuration
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+severity:
+  default-severity: warning

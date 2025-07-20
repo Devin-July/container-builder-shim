@@ -28,6 +28,30 @@
 4. containerization processes the build.
 5. Build output and metadata flow back through container-builder-shim to BuildKit.
 
+## Development
+
+### Code Quality
+
+This project uses [GolangCI-Lint](https://golangci-lint.run/) for code quality checks. To run the linter locally:
+
+1. **Install golangci-lint:**
+   ```bash
+   # macOS (using Homebrew)
+   brew install golangci-lint
+   
+   # Linux/macOS (using install script)
+   curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+   
+   # Or follow the installation guide: https://golangci-lint.run/welcome/install/
+   ```
+
+2. **Run the linter:**
+   ```bash
+   make lint
+   ```
+
+The linter configuration is defined in `.golangci.yml` and is integrated into the CI pipeline.
+
 ## Contributing
 
 Contributions to Containerization are welcomed and encouraged. Please see our [main contributing guide](https://github.com/apple/containerization/blob/main/CONTRIBUTING.md) for more information.
