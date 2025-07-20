@@ -30,6 +30,9 @@ jobs:
           make fmt
           git diff
           if ! git diff --quiet ; then echo the following files require formatting or license headers: ; git diff --name-only ; false ; fi
+      - name: Run linting
+        run: |
+          make lint
       - name: Check protobufs 
         run: | 
           make go-protos

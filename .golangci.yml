@@ -1,0 +1,76 @@
+# golangci-lint configuration for container-builder-shim
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    # Core linters that catch real issues
+    - errcheck      # Check for unchecked errors
+    - govet         # Go vet examiner
+    - staticcheck   # Advanced static analysis
+    - gosimple      # Simplify code suggestions
+    - ineffassign   # Detect ineffectual assignments
+    - unused        # Find unused code
+    - typecheck     # Type checking
+    
+    # Code quality and style
+    - gofmt         # Format checking
+    - goimports     # Import formatting
+    - misspell      # Spelling mistakes
+    - unconvert     # Remove unnecessary conversions
+    
+    # Security and best practices
+    - gosec         # Security issues (with exclusions)
+
+linters-settings:
+  errcheck:
+    # Don't require error checking for these functions in tests
+    exclude-functions:
+      - (github.com/stretchr/testify/assert.*|github.com/stretchr/testify/require.*|github.com/stretchr/testify/suite.*)
+  
+  gosec:
+    # Exclude common false positives
+    excludes:
+      - G404  # Use of weak random number generator in tests
+      - G402  # TLS MinVersion (handled by Go defaults)
+  
+  staticcheck:
+    checks: ["all", "-SA1019"]  # Exclude deprecation warnings for now
+
+issues:
+  # Don't limit the number of issues
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  
+  # Exclude directories from linting
+  exclude-dirs:
+    - vendor
+  
+  exclude-rules:
+    # Exclude generated files
+    - path: '\.pb\.go$'
+      linters:
+        - errcheck
+        - gosec
+        - staticcheck
+        - unused
+        - ineffassign
+    
+    # Be more lenient with test files
+    - path: '_test\.go$'
+      linters:
+        - errcheck
+        - gosec
+        - unused
+    
+    # Exclude vendor directory
+    - path: 'vendor/'
+      linters:
+        - errcheck
+        - gosec
+        - staticcheck
+        - unused
+        - ineffassign
+        - misspell
